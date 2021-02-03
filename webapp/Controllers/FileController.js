@@ -2,6 +2,7 @@ const express = require("express");
 const fstream = require("fs");
 const path = require("path");
 const dirJSON = require("directory-tree");
+const { relative, resolve } = require("path");
 
 
 exports.fileCreate = function(request, response)
@@ -31,7 +32,11 @@ exports.fileCreate = function(request, response)
 
 exports.fileList = function(request, response){
     var directory = path.resolve(__dirname, "..") + "/UserData";
-    var dirTree = dirJSON(directory, {normalizePath : true});
+    var dirTree = dirJSON(directory, {normalizePath : true}, (item, fpath, stats) => {
+        item.path = item.path.substr(path.resolve(__dirname, "..").length);
+    }, (item, fpath, stats) => {
+        item.path = item.path.substr(path.resolve(__dirname, "..").length);
+    });
     response.status(200).json(dirTree);
 };
 
