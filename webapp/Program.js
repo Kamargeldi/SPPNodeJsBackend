@@ -4,11 +4,15 @@ const homeRouter = require("./Routers/HomeRouter.js");
 const registerRouter = require("./Routers/RegisterRouter.js");
 const loginRouter = require("./Routers/LoginRouter");
 const fileRouter = require("./Routers/FileRouter.js");
+const tokenKey = '1a2b-3c4d-5e6f-7g8h';
+const cookieParser = require("cookie-parser");
 
 application.use(express.urlencoded({extended : true}));
 application.use(express.json());
+application.use(cookieParser(tokenKey));
 application.set("view engine", "hbs");
 application.set("views", "./webapp/View");
+
 application.use("/Static", express.static(__dirname + "/Static"));
 application.use("/", homeRouter);
 application.use("/register", registerRouter);
@@ -17,7 +21,7 @@ application.use("/file", fileRouter);
 
 application.use(function (req, res, next) 
 {
-    res.status(404).json({ message : "Not Found" });
+    res.status(404).json({ message : "Page not found." });
 });
 
 application.listen(5000, "localhost", () => 
