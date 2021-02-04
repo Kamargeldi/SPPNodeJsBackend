@@ -16,6 +16,7 @@ body("password").trim().isLength({ min: 5 }).withMessage("Password must be at le
     if (!errors.isEmpty())
     {
         response.status(422).json({ message : errors.array() });
+        console.log("Status: 422     Message: Login validation failed.");
         return;
     }
 

@@ -2,7 +2,6 @@ const express = require("express");
 const fstream = require("fs");
 const path = require("path");
 const dirJSON = require("directory-tree");
-const { relative, resolve } = require("path");
 
 
 exports.fileCreate = function(request, response)
@@ -13,6 +12,7 @@ exports.fileCreate = function(request, response)
     if (fexists)
     {
         response.status(409).json({message : "File already exists."});
+        console.log("Status: 409     Message: File already exists.");
     }
     else
     {
@@ -21,10 +21,12 @@ exports.fileCreate = function(request, response)
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
+                console.log("Status: 500     Message: Internal server error.");
                 return;
             }
 
             response.status(201).json({message : "File created."});
+            console.log("Status: 201     Message: File created.");
         });
     }
 };
@@ -38,6 +40,7 @@ exports.fileList = function(request, response){
         item.path = item.path.substr(path.resolve(__dirname, "..").length);
     });
     response.status(200).json(dirTree);
+    console.log("Status: 200     Message: File list sent to client.");
 };
 
 
@@ -51,15 +54,18 @@ exports.fileGet = function(request, response){
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
+                console.log("Status: 500     Message: Internal server error.");
                 return;
             }
 
             response.status(200).json({fileContent : data.toJSON().data});
+            console.log("Status: 200     Message: File sent to client.");
         });
     }
     else
     {
         response.status(404).json({error : "File not found."});
+        console.log("Status: 404     Message: File not found.");
     }
 };
 
@@ -74,14 +80,17 @@ exports.fileDelete = function(request, response){
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
+                console.log("Status: 500     Message: Internal server error.");
                 return;
             }
 
             response.status(200).json({message : "File deleted."});
+            console.log("Status: 200     Message: File deleted.");
         });
     }
     else
     {
         response.status(404).json({message : "File not found."});
+        console.log("Status: 404     Message: File not found.");
     }
 };

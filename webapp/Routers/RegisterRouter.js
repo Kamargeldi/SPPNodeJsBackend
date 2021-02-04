@@ -22,6 +22,7 @@ body("confirm").trim().isLength({ min : 5 }).withMessage("Password confirm must 
     if (!errors.isEmpty())
     {
         response.status(422).json({message: errors.array()});
+        console.log("Status: 422     Message: Register validation failed.")
         return;
     }
 
