@@ -3,11 +3,13 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const tokenKey = '1a2b-3c4d-5e6f-7g8h';
 const dal = require("../DAL/DAL.js");
+const datetime = require("date-and-time");
+
 
 exports.loginGet = function(request, response)
 {
     response.status(200).send("Login get action.");
-    console.log("Status: 200     Message: Login page sent.");
+    console.log("Status: 200     Message: Login page sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
 };
 
 
@@ -22,9 +24,9 @@ exports.loginPost = function(request, response)
             if (element[0].email === email && element[0].password === password)
             {
                 response.status(200)
-                .cookie("authtoken", jwt.sign({ id: element[0].id, email: email}, tokenKey, {expiresIn : "1m"}), {httpOnly: true})
+                .cookie("authtoken", jwt.sign({ id: element[0].id, email: email}, tokenKey, {expiresIn : "15m"}), {httpOnly: true})
                 .json({message: "Set cookie."});
-                console.log("Status: 200     Message: Auth Token cookie sent.");
+                console.log("Status: 200     Message: Auth Token cookie sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                 exists = true;
             }
         });
@@ -32,13 +34,13 @@ exports.loginPost = function(request, response)
         if (!exists)
         {
             response.status(404).json({message : "User not found or wrong password."});
-            console.log("Status: 404     Message: User not found or wrong password.");
+            console.log("Status: 404     Message: User not found or wrong password  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         }
     })
     .catch((err) => {
         console.log("Error: ", err.message);
         response.status(500).json({message : "Internal server error."});
-        console.log("Status: 500     Message: Internal server error.");
+        console.log("Status: 500     Message: Internal server error  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     });
 };
 
@@ -51,6 +53,6 @@ exports.logoutPost = function(request, response)
     {
         response.clearCookie("authtoken");
         response.status(200).json("Log out success.");
-        console.log("Status: 200     Message: User logged out.");
+        console.log("Status: 200     Message: User logged out  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     }
 }

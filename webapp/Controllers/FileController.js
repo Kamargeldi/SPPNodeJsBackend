@@ -2,6 +2,7 @@ const express = require("express");
 const fstream = require("fs");
 const path = require("path");
 const dirJSON = require("directory-tree");
+const datetime = require("date-and-time");
 
 
 exports.fileCreate = function(request, response)
@@ -12,7 +13,7 @@ exports.fileCreate = function(request, response)
     if (fexists)
     {
         response.status(409).json({message : "File already exists."});
-        console.log("Status: 409     Message: File already exists.");
+        console.log("Status: 409     Message: File already exists  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     }
     else
     {
@@ -21,12 +22,12 @@ exports.fileCreate = function(request, response)
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
-                console.log("Status: 500     Message: Internal server error.");
+                console.log("Status: 500     Message: Internal server error  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                 return;
             }
 
             response.status(201).json({message : "File created."});
-            console.log("Status: 201     Message: File created.");
+            console.log("Status: 201     Message: File created  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         });
     }
 };
@@ -40,7 +41,7 @@ exports.fileList = function(request, response){
         item.path = item.path.substr(path.resolve(__dirname, "..").length);
     });
     response.status(200).json(dirTree);
-    console.log("Status: 200     Message: File list sent to client.");
+    console.log("Status: 200     Message: File list sent to client  "  + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
 };
 
 
@@ -54,18 +55,18 @@ exports.fileGet = function(request, response){
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
-                console.log("Status: 500     Message: Internal server error.");
+                console.log("Status: 500     Message: Internal server error  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                 return;
             }
 
             response.status(200).json({fileContent : data.toJSON().data});
-            console.log("Status: 200     Message: File sent to client.");
+            console.log("Status: 200     Message: File sent to client  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         });
     }
     else
     {
         response.status(404).json({error : "File not found."});
-        console.log("Status: 404     Message: File not found.");
+        console.log("Status: 404     Message: File not found  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     }
 };
 
@@ -80,17 +81,17 @@ exports.fileDelete = function(request, response){
             {
                 console.log("Error: " + err.message);
                 response.status(500).json({message : "Internal server error."});
-                console.log("Status: 500     Message: Internal server error.");
+                console.log("Status: 500     Message: Internal server error  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                 return;
             }
 
             response.status(200).json({message : "File deleted."});
-            console.log("Status: 200     Message: File deleted.");
+            console.log("Status: 200     Message: File deleted  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         });
     }
     else
     {
         response.status(404).json({message : "File not found."});
-        console.log("Status: 404     Message: File not found.");
+        console.log("Status: 404     Message: File not found  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     }
 };

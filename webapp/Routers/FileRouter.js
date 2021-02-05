@@ -5,6 +5,8 @@ const tokenKey = '1a2b-3c4d-5e6f-7g8h';
 const jwt = require("jsonwebtoken");
 const {body, validationResult} = require("express-validator");
 const path = require("path");
+const datetime = require("date-and-time");
+
 
 fileRouter.use((request, response, next) => {
     var authtoken = request.cookies.authtoken;
@@ -12,6 +14,7 @@ fileRouter.use((request, response, next) => {
     if (!authtoken)
     {
         response.status(401).json({message : "Unauthorized."});
+        console.log("Status: 401     Message: Unauthorized  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         return;
     }
 
@@ -21,6 +24,7 @@ fileRouter.use((request, response, next) => {
             console.log("Error: " + err.message);
             response.clearCookie("authtoken");
             response.status(401).json({message : "Unauthorized."});
+            console.log("Status: 401     Message: Unauthorized  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             return;
         }
         
@@ -42,7 +46,7 @@ fileRouter.post("/create", [
         if (!errors.isEmpty())
         {
             response.status(422).json({message: errors.array()});
-            console.log("Status: 422     Message: File create validation failed.");
+            console.log("Status: 422     Message: File create validation failed  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             return;
         }
 
@@ -66,7 +70,7 @@ fileRouter.post("/download", [
         if (!errors.isEmpty())
         {
             response.status(422).json({message: errors.array()});
-            console.log("Status: 422     Message: File download validation failed.");
+            console.log("Status: 422     Message: File download validation failed  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             return;
         }
 
@@ -87,7 +91,7 @@ fileRouter.post("/delete", [
         if (!errors.isEmpty())
         {
             response.status(422).json({message: errors.array()});
-            console.log("Status: 422     Message: File delete validation failed.");
+            console.log("Status: 422     Message: File delete validation failed  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             return;
         }
 

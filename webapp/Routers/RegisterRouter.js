@@ -2,6 +2,7 @@ const express = require("express");
 const registerRouter = express.Router();
 const registerController = require("../Controllers/RegisterController.js");
 const { body, validationResult } = require("express-validator");
+const datetime = require("date-and-time");
 
 
 registerRouter.get("/", registerController.registerGet);
@@ -22,7 +23,7 @@ body("confirm").trim().isLength({ min : 5 }).withMessage("Password confirm must 
     if (!errors.isEmpty())
     {
         response.status(422).json({message: errors.array()});
-        console.log("Status: 422     Message: Register validation failed.")
+        console.log("Status: 422     Message: Register validation failed  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."))
         return;
     }
 
