@@ -9,7 +9,7 @@ const datetime = require("date-and-time");
 
 
 fileRouter.use((request, response, next) => {
-    var authtoken = request.cookies.authtoken;
+    var authtoken = request.get("Authorization");
     
     if (!authtoken)
     {
@@ -22,12 +22,11 @@ fileRouter.use((request, response, next) => {
         if (err)
         {
             console.log("Error: " + err.message);
-            response.clearCookie("authtoken");
             response.status(401).json({message : "Unauthorized."});
             console.log("Status: 401     Message: Unauthorized  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             return;
         }
-        
+
         next();
     });
 });

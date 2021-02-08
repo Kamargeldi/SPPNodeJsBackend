@@ -1,5 +1,4 @@
 const express = require("express");
-const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const tokenKey = '1a2b-3c4d-5e6f-7g8h';
 const dal = require("../DAL/DAL.js");
@@ -23,10 +22,10 @@ exports.loginPost = function(request, response)
         result.forEach(element => {
             if (element[0].email === email && element[0].password === password)
             {
+                response.setHeader("Authorization", jwt.sign({ id: element[0].id, email: email}, tokenKey, {expiresIn : "60m"}));
                 response.status(200)
-                .cookie("authtoken", jwt.sign({ id: element[0].id, email: email}, tokenKey, {expiresIn : "15m"}), {httpOnly: true})
-                .json({message: "Set cookie."});
-                console.log("Status: 200     Message: Auth Token cookie sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
+                .json({message: "Authorization sent."});
+                console.log("Status: 200     Message: Auth Token header sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                 exists = true;
             }
         });

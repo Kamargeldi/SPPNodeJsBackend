@@ -16,7 +16,7 @@ body("password").trim().isLength({ min: 5 }).withMessage("Password must be at le
     var errors = validationResult(request);
     if (!errors.isEmpty())
     {
-        response.status(422).json({ message : errors.array() });
+        response.status(422).json({ message : errors.array()[0].msg });
         console.log("Status: 422     Message: Login validation failed  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
         return;
     }
