@@ -8,6 +8,7 @@ const fileRouter = require("./Routers/FileRouter.js");
 const tokenKey = '1a2b-3c4d-5e6f-7g8h';
 const cookieParser = require("cookie-parser");
 const datetime = require("date-and-time");
+const bodyParser = require("body-parser");
 
 application.use(express.urlencoded({extended : true}));
 application.use(express.json());

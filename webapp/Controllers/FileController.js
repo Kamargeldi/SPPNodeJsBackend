@@ -4,13 +4,15 @@ const path = require("path");
 const datetime = require("date-and-time");
 const jwt = require("jsonwebtoken");
 const dal = require("../DAL/DAL");
+const { Stream } = require("stream");
+const FormData = require('form-data');
 
 exports.fileCreate = function(request, response)
 {
     var userId = jwt.decode(request.get("Authorization"))["id"];
-    var fpath = request.body.filePath;
-    var fcontent = request.body.fileContent;
-    var fexists = fstream.existsSync(path.resolve(__dirname, "..") + "/UserData" + fpath);
+    var fpath = request.body.fileName;
+    var fcontent = request.file;
+    var fexists = fstream.existsSync(path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + fpath);
     if (fexists)
     {
         response.status(409).json({message : "File already exists."});
@@ -22,10 +24,13 @@ exports.fileCreate = function(request, response)
         [fpath, userId, path.extname(fpath), 0])
         .then((value) => {
             
-            var dir = path.dirname(path.resolve(__dirname, '..' + "/UserData" + fpath));
+            var dir = path.dirname(path.resolve(__dirname, '..' + "/UserData/" + userId + "/" + fpath));
             if (!fstream.existsSync(dir))
                 fstream.mkdirSync(dir, {recursive: true});
-            fstream.writeFile(path.resolve(__dirname, "..") + "/UserData" + fpath, fcontent, {}, (err) => {
+            
+                
+            
+            fstream.writeFile(path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + fpath, fcontent.buffer, {}, (err) => {
                 if (err)
                 {
                     console.log("Error: " + err.message);
@@ -36,7 +41,7 @@ exports.fileCreate = function(request, response)
 
                 dal.connection.query("update `storage`.`file` SET `size` = ? WHERE (`id` = ?)",
                 [
-                    fstream.statSync(path.resolve(__dirname, "..") + "/UserData" + fpath).size,
+                    fstream.statSync(path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + fpath).size,
                     value[0].insertId
                 ]).then((setResult) => {
                     response.status(201).json({message : "File created."});
@@ -60,7 +65,7 @@ exports.fileList = function(request, response){
 
 exports.fileGet = function(request, response){
     var userId = jwt.decode(request.get("Authorization"))["id"];
-    var fpath = path.resolve(__dirname, "..") + "/UserData" + request.body.filePath;
+    var fpath = path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + request.body.filePath;
     dal.connection.query("select * from file where filename = ? and user_id = ?", 
     [request.body.filePath, userId])
     .then((value) => {
@@ -75,8 +80,7 @@ exports.fileGet = function(request, response){
                     console.log("Status: 500     Message: Internal server error  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
                     return;
                 }
-
-                response.status(200).json({fileContent : data.toJSON().data});
+                response.status(200).send(data);
                 console.log("Status: 200     Message: File sent to client  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
             });
         }
@@ -91,7 +95,7 @@ exports.fileGet = function(request, response){
 
 exports.fileDelete = function(request, response){
     var userId = jwt.decode(request.get("Authorization"))["id"];
-    var fpath = path.resolve(__dirname, "..") + "/UserData" + request.body.filePath;
+    var fpath = path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + request.body.filePath;
     dal.connection.query("select * from file where filename = ? and user_id = ?", 
     [request.body.filePath, userId])
     .then((value) => {
@@ -121,3 +125,23 @@ exports.fileDelete = function(request, response){
         }
     });
 };
+
+
+exports.fileExists = function(request, response){
+    var userId = jwt.decode(request.get("Authorization"))["id"];
+    var fpath = path.resolve(__dirname, "..") + "/UserData/" + userId + "/" + request.body.filePath;
+    dal.connection.query("select * from file where filename = ? and user_id = ?", 
+    [request.body.filePath, userId])
+    .then((value) => {
+
+        if (value[0].length !== 0)
+        {
+            response.status(200).json({message: 'File already exists.'});
+        }
+
+        if (value[0].length === 0)
+        {
+            response.status(404).json('File not found.');
+        }
+    });
+}

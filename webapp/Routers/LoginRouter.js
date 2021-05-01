@@ -22,8 +22,8 @@ body("password").trim().isLength({ min: 5 }).withMessage("Password must be at le
     }
 
     next();
-}
-,loginController.loginPost);
+}, 
+loginController.loginPost);
 
 
 

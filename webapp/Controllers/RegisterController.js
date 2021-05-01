@@ -20,7 +20,6 @@ exports.registerPost = function(request, response)
         response.status(201).json({message : "Register success."});
         console.log("Status: 201     Message: Register success  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     }).catch((err) => {
-        console.log("Error: " + err.message);
         response.status(409).json({message : "User already exists."});
         console.log("Status: 409     Message: User already exists  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     });

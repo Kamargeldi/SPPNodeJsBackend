@@ -16,25 +16,19 @@ exports.loginPost = function(request, response)
 {
     var email = request.body.email;
     var password = request.body.password;
-    var exists = false;
-    dal.connection.query("select * from user where email = ?", [email])
+    dal.connection.query("select * from user where email = ? and password = ?", [email, password])
     .then((result) => {
-        result.forEach(element => {
-            if (element[0].email === email && element[0].password === password)
-            {
-                response.setHeader("Authorization", jwt.sign({ id: element[0].id, email: email}, tokenKey, {expiresIn : "60m"}));
-                response.status(200)
-                .json({message: "Authorization sent."});
-                console.log("Status: 200     Message: Auth Token header sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
-                exists = true;
-            }
-        });
-
-        if (!exists)
+        if (result[0].length === 0)
         {
             response.status(404).json({message : "User not found or wrong password."});
             console.log("Status: 404     Message: User not found or wrong password  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
+            return;
         }
+
+        response.setHeader("Authorization", jwt.sign({ id: result[0][0].id, email: email}, tokenKey, {expiresIn : "60m"}));
+        response.status(200)
+        .json({message: "Authorization sent."});
+        console.log("Status: 200     Message: Auth Token header sent  " + datetime.format(new Date(), "hh:mm:ss  DD-MM-YYYY."));
     })
     .catch((err) => {
         console.log("Error: ", err.message);
